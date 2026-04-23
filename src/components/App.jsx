@@ -7,6 +7,7 @@ import Error from "./Error";
 import Question from "./Question";
 import Main from "./MainComponent";
 import StartScreen from "./StartScreen";
+import NextButton from "./NextButton";
 
 function App() {
   const initialState = {
@@ -29,6 +30,8 @@ function App() {
         const question = state.questions[state.index];
         const answer = action.payload;
 
+        console.log(answer);
+
         return {
           ...state,
           answer,
@@ -37,6 +40,8 @@ function App() {
               ? state.points + question.points
               : state.points,
         };
+      case "nextQuestion":
+        return { ...state, index: state.index + 1, answer: null };
       default:
         throw new Error("unknown action");
     }
@@ -74,11 +79,14 @@ function App() {
           <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Question
-            question={questions[index]}
-            dispatch={dispatch}
-            answer={answer}
-          />
+          <>
+            <Question
+              question={questions[index]}
+              dispatch={dispatch}
+              answer={answer}
+            />
+            <NextButton dispatch={dispatch} answer={answer} />
+          </>
         )}
       </Main>
     </div>
