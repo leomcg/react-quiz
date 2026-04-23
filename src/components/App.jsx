@@ -20,13 +20,20 @@ function App() {
     answer: null,
     points: 0,
     highscore: 0,
-    secondsRemaining: 10,
+    secondsRemaining: null,
   };
+
+  const SECS_PER_QUESTION = 30;
 
   const reducer = (state, action) => {
     switch (action.type) {
       case "dataReceived":
-        return { ...state, questions: action.payload, status: "ready" };
+        return {
+          ...state,
+          questions: action.payload,
+          status: "ready",
+          secondsRemaining: state.questions.length * SECS_PER_QUESTION,
+        };
       case "dataFailed":
         return { ...state, status: "error" };
       case "start":
@@ -61,7 +68,11 @@ function App() {
           status: "active",
         };
       case "tick": {
-        return { ...state, secondsRemaining: state.secondsRemaining - 1 };
+        return {
+          ...state,
+          secondsRemaining: state.secondsRemaining - 1,
+          status: state.secondsRemaining <= 0 ? "finished" : state.status,
+        };
       }
       default:
         throw new Error("unknown action");
